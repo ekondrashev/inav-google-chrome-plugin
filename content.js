@@ -15,3 +15,25 @@ function getAllImages() {
     getEls(document);
     return arrImages;
 }
+
+chrome.runtime.onMessage.addListener(function (msg, sender, sendResponse) {
+    if (msg.text === 'get_all_images') {
+        var imgs=[], allImages = getAllImages();
+        for (var i=0; i<allImages.length; i++) {
+            var isDuplicate = false;
+            for (var j=0; j<imgs.length; j++) {
+                if (allImages[i].src===imgs[j].src) {
+                    isDuplicate = true;
+                    break;
+                }
+            }
+            if (!isDuplicate && allImages[i].src) {
+                imgs.push({
+                    src: allImages[i].src,
+                    alt: allImages[i].alt
+                });
+            }
+        }
+        sendResponse(imgs);
+    }
+});
