@@ -16,9 +16,11 @@ function showMenu(items) {
         var li = document.createElement('li');
         li.setAttribute('role', 'menuitem');
         var button = document.createElement('button');
-        button.setAttribute('id', 'img'+index);
         var text = document.createTextNode('Image '+(index+1)+': '+element.src.replace(/^.*[\\/]/, ''));
         button.appendChild(text);
+        button.addEventListener('click', function() {
+            document.getElementById('menu').innerHTML = 'Button '+(index+1)+' has pressed!';
+        });
         li.appendChild(button);
         ul.appendChild(li);
     });
