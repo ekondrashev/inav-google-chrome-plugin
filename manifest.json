@@ -13,6 +13,19 @@
     "permissions": [
         "activeTab"
     ],
+
+    "commands": {
+        "_execute_browser_action": {
+            "suggested_key": {
+                "default": "Alt+Z",
+                "windows": "Alt+Z",
+                "mac": "Alt+Z",
+                "linux": "Alt+Z",
+                "chromeos": "Alt+Z"
+            }
+        }
+    },
+
     "content_scripts": [{
         "matches": ["<all_urls>"],
         "js": ["content.js"],
