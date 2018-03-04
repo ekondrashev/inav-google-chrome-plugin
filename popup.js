@@ -24,3 +24,10 @@ function showMenu(items) {
     });
     return nav;
 }
+
+chrome.tabs.getSelected(null, function(tab) {
+    chrome.tabs.sendMessage(tab.id, {text: 'get_all_images'}, function(response) {
+        document.getElementById('menu').appendChild(showMenu(response));
+        //tab.url
+    });
+});
