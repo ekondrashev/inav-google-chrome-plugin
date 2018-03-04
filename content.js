@@ -19,9 +19,9 @@ function getAllImages() {
 chrome.runtime.onMessage.addListener(function (msg, sender, sendResponse) {
     if (msg.text === 'get_all_images') {
         var imgs=[], allImages = getAllImages();
-        for (var i=0; i<allImages.length; i++) {
+        for (var i in allImages) {
             var isDuplicate = false;
-            for (var j=0; j<imgs.length; j++) {
+            for (var j in imgs) {
                 if (allImages[i].src===imgs[j].src) {
                     isDuplicate = true;
                     break;

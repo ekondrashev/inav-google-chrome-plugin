@@ -15,11 +15,11 @@ function showMenu(items) {
     items.forEach(function(element, index, arr){
         var li = document.createElement('li');
         li.setAttribute('role', 'menuitem');
-        var a = document.createElement('a');
-        a.setAttribute('href', element.src);
-        var text = document.createTextNode(element.src.replace(/^.*[\\/]/, ''));
-        a.appendChild(text);
-        li.appendChild(a);
+        var button = document.createElement('button');
+        button.setAttribute('id', 'img'+index);
+        var text = document.createTextNode('Image '+(index+1)+': '+element.src.replace(/^.*[\\/]/, ''));
+        button.appendChild(text);
+        li.appendChild(button);
         ul.appendChild(li);
     });
     return nav;
