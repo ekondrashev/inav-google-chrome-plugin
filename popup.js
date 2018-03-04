@@ -1,3 +1,16 @@
+function sendData(obj) {
+    if (!window.XMLHttpRequest) return false;
+    request = new XMLHttpRequest();
+    request.onreadystatechange = function() {
+        if (request.readyState == 4 && request.status == 200) {
+            //alert(request.responseText);
+        }
+    };
+    request.open("POST", "myserver", true);
+    request.send(JSON.stringify(obj));
+    return true;
+}
+
 function showMenu(items) {
     if(items.length===0) {
         var h1 = document.createElement('h1');
@@ -19,6 +32,7 @@ function showMenu(items) {
         var text = document.createTextNode('Image '+(index+1)+': '+element.src.replace(/^.*[\\/]/, ''));
         button.appendChild(text);
         button.addEventListener('click', function() {
+            sendData({src: element.src});
             document.getElementById('menu').innerHTML = 'Button '+(index+1)+' has pressed!';
         });
         li.appendChild(button);
