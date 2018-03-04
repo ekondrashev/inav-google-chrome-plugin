@@ -1,2 +1,16 @@
 {
+    "manifest_version": 2,
+ 
+    "name": "Image Navigator",
+    "description": "Searching all images in active tab and send selected image on the server",
+    "version": "0.1",
+    
+    "browser_action": {
+        "default_icon": "img/icon128.png",
+        "default_popup": "popup.html"
+    },
+
+    "permissions": [
+        "activeTab"
+    ]
 }
