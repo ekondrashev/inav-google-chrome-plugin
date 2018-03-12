@@ -1,39 +1,41 @@
-function getAllImages() {
-    var arrImages = [];
-    function getEls(el) {
-        var chNodes, i;
+// Function receives a list of images found on the page in the active tab of the browser
+function get_all_images() {
+    var arr_images = [];
+    function get_els(el) {
+        var ch_nodes, i;
         if (el instanceof HTMLImageElement) {
-            arrImages.push(el);
+            arr_images.push(el);
         }
         if (el.hasChildNodes()) {
-            chNodes = el.childNodes;
-            for (i = 0; i < chNodes.length; i++) {
-                getEls(chNodes[i]);
+            ch_nodes = el.childNodes;
+            for (i = 0; i < ch_nodes.length; i++) {
+                get_els(ch_nodes[i]);
             }
         }
     }
-    getEls(document);
-    return arrImages;
+    get_els(document);
+    return arr_images;
 }
 
-chrome.runtime.onMessage.addListener(function (msg, sender, sendResponse) {
+// Awaiting the request and giving the answer
+chrome.runtime.onMessage.addListener(function (msg, sender, send_response) {
     if (msg.text === 'get_all_images') {
-        var imgs=[], allImages = getAllImages();
-        for (var i in allImages) {
-            var isDuplicate = false;
+        var imgs=[], all_images = get_all_images();
+        for (var i in all_images) {
+            var is_duplicate = false;
             for (var j in imgs) {
-                if (allImages[i].src===imgs[j].src) {
-                    isDuplicate = true;
+                if (all_images[i].src===imgs[j].src) {
+                    is_duplicate = true;
                     break;
                 }
             }
-            if (!isDuplicate && allImages[i].src) {
+            if (!is_duplicate && all_images[i].src) {
                 imgs.push({
-                    src: allImages[i].src,
-                    alt: allImages[i].alt
+                    src: all_images[i].src,
+                    alt: all_images[i].alt
                 });
             }
         }
-        sendResponse(imgs);
+        send_response(imgs);
     }
 });

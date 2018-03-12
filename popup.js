@@ -38,7 +38,8 @@ function files_list(access_token) {
     });
 }
 
-function showMenu(items) {
+// Function displays a list of pictures found on the page in the active tab
+function show_menu(items) {
     if(items.length===0) {
         var h1 = document.createElement('h1');
         var text = document.createTextNode("Can't find images in active tab!");
@@ -70,7 +71,7 @@ function showMenu(items) {
 
 chrome.tabs.getSelected(null, function(tab) {
     chrome.tabs.sendMessage(tab.id, {text: 'get_all_images'}, function(response) {
-        document.getElementById('menu').appendChild(showMenu(response));
+        document.getElementById('menu').appendChild(show_menu(response));
         //tab.url
     });
 });
