@@ -22,6 +22,22 @@ function get_access_token() {
     });
 }
 
+// function to list some Drive files using the newly acquired access token
+function files_list(access_token) {
+    const drive_url = "https://www.googleapis.com/drive/v3/files";
+    let drive_request = {
+        method: "GET",
+        headers: new Headers({
+            Authorization: "Bearer "+access_token
+        })
+    }
+    fetch(drive_url, drive_request).then( response => {
+        return(response.json());
+    }).then( list =>  {
+        alert(list.files[0].name);
+    });
+}
+
 function showMenu(items) {
     if(items.length===0) {
         var h1 = document.createElement('h1');
