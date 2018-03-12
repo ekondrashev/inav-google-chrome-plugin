@@ -1,3 +1,27 @@
+// Get access token using saved refresh token (Google Drive REST API - Playground)
+function get_access_token() {
+    const refresh_token = "1/98Q2wu_TU43II00uaVO_17wcbwl_AIpvAKxD3QtP4wQ";
+    const client_id = "6221500376-uj3r9a1l5591l5cr8vgjvvqntbuoj6fn.apps.googleusercontent.com";
+    const client_secret = "k8-whQuOia8nQ1DHFQbAYAaJ";
+    // from https://developers.google.com/identity/protocols/OAuth2WebServer#offline
+    const refresh_url = "https://www.googleapis.com/oauth2/v4/token";
+    const post_body = `grant_type=refresh_token&client_id=${encodeURIComponent(client_id)}&client_secret=${encodeURIComponent(client_secret)}&refresh_token=${encodeURIComponent(refresh_token)}`;
+    let refresh_request = {
+        body: post_body,
+        method: "POST",
+        headers: new Headers({
+            'Content-Type': 'application/x-www-form-urlencoded'
+        })
+    }
+
+    // post to the refresh endpoint, parse the json response and use the access token to call files.list
+    fetch(refresh_url, refresh_request).then( response => {
+        return(response.json());
+    }).then( response_json =>  {
+        files_list(response_json.access_token);
+    });
+}
+
 function showMenu(items) {
     if(items.length===0) {
         var h1 = document.createElement('h1');
