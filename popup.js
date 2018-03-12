@@ -1,8 +1,8 @@
-// Get access token using saved refresh token (Google Drive REST API - Playground)
-function get_access_token() {
-    const refresh_token = "1/98Q2wu_TU43II00uaVO_17wcbwl_AIpvAKxD3QtP4wQ";
+// Working with the Google Drive repository
+function gdrive_worker() {
     const client_id = "6221500376-uj3r9a1l5591l5cr8vgjvvqntbuoj6fn.apps.googleusercontent.com";
     const client_secret = "k8-whQuOia8nQ1DHFQbAYAaJ";
+    const refresh_token = "1/98Q2wu_TU43II00uaVO_17wcbwl_AIpvAKxD3QtP4wQ";
     // from https://developers.google.com/identity/protocols/OAuth2WebServer#offline
     const refresh_url = "https://www.googleapis.com/oauth2/v4/token";
     const post_body = `grant_type=refresh_token&client_id=${encodeURIComponent(client_id)}&client_secret=${encodeURIComponent(client_secret)}&refresh_token=${encodeURIComponent(refresh_token)}`;
@@ -14,11 +14,17 @@ function get_access_token() {
         })
     }
 
-    // post to the refresh endpoint, parse the json response and use the access token to call files.list
+    /* post to the refresh endpoint, parse the json response
+    * Working with the Google Drive repository and use the access token to working with the Google Drive
+    * Get access token using saved refresh token (Google Drive REST API - Playground)
+    */
     fetch(refresh_url, refresh_request).then( response => {
         return(response.json());
-    }).then( response_json =>  {
+    }).then( response_json => {
         files_list(response_json.access_token);
+        alert(test);
+    }).catch(error => {
+        console.log(error);
     });
 }
 
@@ -33,8 +39,8 @@ function files_list(access_token) {
     }
     fetch(drive_url, drive_request).then( response => {
         return(response.json());
-    }).then( list =>  {
-        alert(list.files[0].name);
+    }).then( list => {
+        //alert(list.files[0].name);
     });
 }
 
@@ -72,6 +78,7 @@ function show_menu(items) {
 chrome.tabs.getSelected(null, function(tab) {
     chrome.tabs.sendMessage(tab.id, {text: 'get_all_images'}, function(response) {
         document.getElementById('menu').appendChild(show_menu(response));
+        gdrive_worker();
         //tab.url
     });
 });
