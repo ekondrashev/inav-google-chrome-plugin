@@ -82,10 +82,37 @@ function show_menu(items) {
     return nav;
 }
 
+function getImages(items) {
+    var data = [];
+    items.forEach(function(element, index, arr){
+        var alt = 'Image '+(index+1)+': ';
+        if(element.alt) {
+            alt += element.alt;
+        } else {
+            alt += element.src.replace(/^.*[\\/]/, '');
+        }
+        var image = {
+            lowsrc: element.src,
+            fullsrc: element.src,
+            description: alt,
+            category: "all"
+        }
+        data.push(image);
+    }
+    return data;
+}
+
 chrome.tabs.getSelected(null, function(tab) {
     chrome.tabs.sendMessage(tab.id, {text: 'get_all_images'}, function(response) {
+        var data = getImages(response);
+        $(function() {
+            $('#galleryherepls').galereya({
+                load: function(next) {
+                    next(data);
+                }
+            });
+        });
         document.getElementById('galleryherepls').appendChild(show_menu(response));
-        //show_menu(response);
         gdrive_worker();
         //tab.url
     });
