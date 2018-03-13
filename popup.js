@@ -63,11 +63,18 @@ function show_menu(items) {
         var li = document.createElement('li');
         li.setAttribute('role', 'menuitem');
         var button = document.createElement('button');
-        var text = document.createTextNode('Image '+(index+1)+': '+element.src.replace(/^.*[\\/]/, ''));
-        button.appendChild(text);
+        var img = document.createElement('img');
+        img.setAttribute('src', element.src);
+        var alt = 'Image '+(index+1)+': ';
+        if(element.alt) {
+            alt += element.alt;
+        } else {
+            alt += element.src.replace(/^.*[\\/]/, '');
+        }
+        img.setAttribute('alt', alt);
+        button.appendChild(img);
         button.addEventListener('click', function() {
-            sendData({src: element.src});
-            document.getElementById('menu').innerHTML = 'Button '+(index+1)+' has pressed!';
+            document.getElementById('galleryherepls').innerHTML = 'Button '+(index+1)+' has pressed!';
         });
         li.appendChild(button);
         ul.appendChild(li);
@@ -77,7 +84,8 @@ function show_menu(items) {
 
 chrome.tabs.getSelected(null, function(tab) {
     chrome.tabs.sendMessage(tab.id, {text: 'get_all_images'}, function(response) {
-        document.getElementById('menu').appendChild(show_menu(response));
+        document.getElementById('galleryherepls').appendChild(show_menu(response));
+        //show_menu(response);
         gdrive_worker();
         //tab.url
     });
