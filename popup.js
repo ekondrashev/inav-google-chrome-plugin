@@ -64,14 +64,8 @@ function show_menu(items) {
         li.setAttribute('role', 'menuitem');
         var button = document.createElement('button');
         var img = document.createElement('img');
-        img.setAttribute('src', element.src);
-        var alt = 'Image '+(index+1)+': ';
-        if(element.alt) {
-            alt += element.alt;
-        } else {
-            alt += element.src.replace(/^.*[\\/]/, '');
-        }
-        img.setAttribute('alt', alt);
+        img.setAttribute('src', element.fullsrc);
+        img.setAttribute('alt', element.description);
         button.appendChild(img);
         button.addEventListener('click', function() {
             document.getElementById('galleryherepls').innerHTML = 'Button '+(index+1)+' has pressed!';

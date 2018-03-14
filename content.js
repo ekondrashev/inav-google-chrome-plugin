@@ -21,27 +21,29 @@ function get_all_images() {
 chrome.runtime.onMessage.addListener(function (msg, sender, send_response) {
     if (msg.text === 'get_all_images') {
         var imgs=[], all_images = get_all_images();
+        var index = 1;
         for (var i in all_images) {
             var is_duplicate = false;
             for (var j in imgs) {
-                if (all_images[i].src===imgs[j].src) {
+                if (all_images[i].src===imgs[j].fullsrc) {
                     is_duplicate = true;
                     break;
                 }
             }
             if (!is_duplicate && all_images[i].src) {
-                var alt = 'Image '+(i+1)+': ';
+                var alt = 'Image '+index+': ';
                 if(all_images[i].alt) {
-            alt += all_images[i].alt;
-        } else {
-            alt += all_images[i].src.replace(/^.*[\\/]/, '');
-        }
+                    alt += all_images[i].alt;
+                } else {
+                    alt += all_images[i].src.replace(/^.*[\\/]/, '');
+                }
                 imgs.push({
                     lowsrc: all_images[i].src,
                     fullsrc: all_images[i].src,
                     description: alt,
                     category: "all"
                 });
+                index++;
             }
         }
         send_response(imgs);
