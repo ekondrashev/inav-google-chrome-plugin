@@ -78,15 +78,15 @@ function show_menu(items) {
 
 chrome.tabs.getSelected(null, function(tab) {
     chrome.tabs.sendMessage(tab.id, {text: 'get_all_images'}, function(response) {
-        /*$(function() {
+        $(function() {
             $('#galleryherepls').galereya({
                 load: function(next) {
                     next(response);
                 }
             });
-        });*/
-        document.getElementById('galleryherepls').appendChild(show_menu(response));
-        gdrive_worker();
+        });
+        //document.getElementById('galleryherepls').appendChild(show_menu(response));
+        //gdrive_worker();
         //tab.url
     });
 });
