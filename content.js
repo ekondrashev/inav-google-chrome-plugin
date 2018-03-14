@@ -30,9 +30,17 @@ chrome.runtime.onMessage.addListener(function (msg, sender, send_response) {
                 }
             }
             if (!is_duplicate && all_images[i].src) {
+                var alt = 'Image '+(i+1)+': ';
+                if(all_images[i].alt) {
+            alt += all_images[i].alt;
+        } else {
+            alt += all_images[i].src.replace(/^.*[\\/]/, '');
+        }
                 imgs.push({
-                    src: all_images[i].src,
-                    alt: all_images[i].alt
+                    lowsrc: all_images[i].src,
+                    fullsrc: all_images[i].src,
+                    description: alt,
+                    category: "all"
                 });
             }
         }
