@@ -78,7 +78,11 @@ function show_menu(items) {
 
 chrome.tabs.getSelected(null, function(tab) {
     chrome.tabs.sendMessage(tab.id, {text: 'get_all_images'}, function(response) {
-        chrome.identity.getAuthToken();
+        chrome.identity.getAuthToken({
+            'interactive': true
+        }, function(token) {
+            // User authorized (use token to get access to drive)
+        });
         $(function() {
             $('#gallery').galereya({
                 load: function(next) {
@@ -86,7 +90,7 @@ chrome.tabs.getSelected(null, function(tab) {
                 }
             });
         });
-        //document.getElementById('galleryherepls').appendChild(show_menu(response));
+        //document.getElementById('gallery').appendChild(show_menu(response));
         //gdrive_worker();
         //tab.url
     });
