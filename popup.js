@@ -78,9 +78,7 @@ function show_menu(items) {
 
 chrome.tabs.getSelected(null, function(tab) {
     chrome.tabs.sendMessage(tab.id, {text: 'get_all_images'}, function(response) {
-        /*chrome.management.getAll(function(resp){
-            document.getElementById('gallery').innerHTML = JSON.stringify(resp);
-        });*/
+        chrome.identity.getAuthToken();
         $(function() {
             $('#gallery').galereya({
                 load: function(next) {

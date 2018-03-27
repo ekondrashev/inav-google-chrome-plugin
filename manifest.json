@@ -16,6 +16,13 @@
         "management",
         "identity"
     ],
+    
+    "oauth2": {
+        "client_id": "6221500376-hg3ob9135pacs8uoqnkiq5gmbf287cgv.apps.googleusercontent.com",
+        "scopes": [
+            "https://www.googleapis.com/auth/drive.file"
+        ]
+    },
 
     "commands": {
         "_execute_browser_action": {
