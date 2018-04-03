@@ -1,49 +1,3 @@
-// Working with the Google Drive repository
-function gdrive_worker() {
-    const client_id = "6221500376-uj3r9a1l5591l5cr8vgjvvqntbuoj6fn.apps.googleusercontent.com";
-    const client_secret = "k8-whQuOia8nQ1DHFQbAYAaJ";
-    const refresh_token = "1/98Q2wu_TU43II00uaVO_17wcbwl_AIpvAKxD3QtP4wQ";
-    // from https://developers.google.com/identity/protocols/OAuth2WebServer#offline
-    const refresh_url = "https://www.googleapis.com/oauth2/v4/token";
-    const post_body = `grant_type=refresh_token&client_id=${encodeURIComponent(client_id)}&client_secret=${encodeURIComponent(client_secret)}&refresh_token=${encodeURIComponent(refresh_token)}`;
-    let refresh_request = {
-        body: post_body,
-        method: "POST",
-        headers: new Headers({
-            'Content-Type': 'application/x-www-form-urlencoded'
-        })
-    }
-
-    /* post to the refresh endpoint, parse the json response
-    * Working with the Google Drive repository and use the access token to working with the Google Drive
-    * Get access token using saved refresh token (Google Drive REST API - Playground)
-    */
-    fetch(refresh_url, refresh_request).then( response => {
-        return(response.json());
-    }).then( response_json => {
-        files_list(response_json.access_token);
-        alert(test);
-    }).catch(error => {
-        console.log(error);
-    });
-}
-
-// function to list some Drive files using the newly acquired access token
-function files_list(access_token) {
-    const drive_url = "https://www.googleapis.com/drive/v3/files";
-    let drive_request = {
-        method: "GET",
-        headers: new Headers({
-            Authorization: "Bearer "+access_token
-        })
-    }
-    fetch(drive_url, drive_request).then( response => {
-        return(response.json());
-    }).then( list => {
-        //alert(list.files[0].name);
-    });
-}
-
 // Function displays a list of pictures found on the page in the active tab
 function show_menu(items) {
     if(items.length===0) {
@@ -78,11 +32,18 @@ function show_menu(items) {
 
 chrome.tabs.getSelected(null, function(tab) {
     chrome.tabs.sendMessage(tab.id, {text: 'get_all_images'}, function(response) {
-        chrome.identity.getAuthToken({
-            'interactive': true
-        }, function(token) {
-            // User authorized (use token to get access to drive)
+        gapiIsLoaded = function () {};
+        var access_token = '';
+        gapi.auth.authorize({
+            immediate: true
+        }, function (access_token) {
+            alert(access_token);
         });
+        //chrome.identity.getAuthToken({
+        //    'interactive': true
+        //}, function(token) {
+        //    User authorized (use token to get access to drive)
+        //});
         $(function() {
             $('#gallery').galereya({
                 load: function(next) {
@@ -91,7 +52,6 @@ chrome.tabs.getSelected(null, function(tab) {
             });
         });
         //document.getElementById('gallery').appendChild(show_menu(response));
-        //gdrive_worker();
         //tab.url
     });
 });
