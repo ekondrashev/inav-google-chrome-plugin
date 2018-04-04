@@ -32,26 +32,19 @@ function show_menu(items) {
 
 chrome.tabs.getSelected(null, function(tab) {
     chrome.tabs.sendMessage(tab.id, {text: 'get_all_images'}, function(response) {
-        gapiIsLoaded = function () {};
-        var access_token = '';
-        gapi.auth.authorize({
-            immediate: true
-        }, function (access_token) {
-            alert(access_token);
-        });
         //chrome.identity.getAuthToken({
         //    'interactive': true
         //}, function(token) {
         //    User authorized (use token to get access to drive)
         //});
-        $(function() {
+        /*$(function() {
             $('#gallery').galereya({
                 load: function(next) {
                     next(response);
                 }
             });
-        });
-        //document.getElementById('gallery').appendChild(show_menu(response));
+        });*/
+        document.getElementById('gallery').appendChild(show_menu(response));
         //tab.url
     });
 });

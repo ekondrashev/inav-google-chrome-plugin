@@ -17,6 +17,12 @@
         "https://www.googleapis.com/*"
     ],
     
+    "background": {
+        "scripts": [
+            "js/background.js"
+        ]
+    },
+    
     "oauth2": {
         "client_id": "6221500376-hg3ob9135pacs8uoqnkiq5gmbf287cgv.apps.googleusercontent.com",
         "scopes": [
