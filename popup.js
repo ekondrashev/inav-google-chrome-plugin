@@ -48,3 +48,8 @@ chrome.tabs.getSelected(null, function(tab) {
         //tab.url
     });
 });
+
+// Comunicate with background script
+chrome.runtime.sendMessage({text: "save_images"}, function(resp) {
+    //alert(resp.text);
+});
