@@ -12,7 +12,7 @@ gapi.auth.authorize = function (params, callback) {
         throw new Error('callback required');
 
     var details = {};
-    details.interactive = params.immediate === false || false;
+    details.interactive = params.immediate !== false || false;
     if (params.accountHint) {
         // Specifying this prevents the account chooser from appearing on Android.
         details.accountHint = params.accountHint;
@@ -21,7 +21,7 @@ gapi.auth.authorize = function (params, callback) {
         access_token = getAuthTokenCallbackParam;
         // TODO: error conditions?
         if (typeof access_token !== 'undefined')
-            callback({ access_token: access_token});
+            callback({access_token: access_token});
         else
             callback();
     }
@@ -88,9 +88,16 @@ gapi.client.request = function (args) {
     };
 }
 
+function upload_files(auth_result) {
+    if (auth_result && !auth_result.error) {
+    //alert(auth_result.access_token);
+    }
+}
+
 // Awaiting the request and giving the answer
 chrome.runtime.onMessage.addListener(function (msg, sender, send_response) {
     if (msg.text === 'save_images') {
+        gapi.auth.authorize({interactive: true}, upload_files);
         var status = {text: "All selected images are uploaded"};
         send_response(status);
     }
