@@ -5,6 +5,7 @@ window.gapi.auth = {};
 window.gapi.client = {};
 
 var access_token = undefined;
+var status_msg = undefined;
 
 // Authorization method in Google services
 gapi.auth.authorize = function (params, callback) {
@@ -90,15 +91,15 @@ gapi.client.request = function (args) {
 
 function upload_files(auth_result) {
     if (auth_result && !auth_result.error) {
-    //alert(auth_result.access_token);
-    }
+    status_msg = {text: "All selected images are uploaded"};
+    } else
+        status_msg = {text: "Google Drive authorization error!"};
 }
 
 // Awaiting the request and giving the answer
 chrome.runtime.onMessage.addListener(function (msg, sender, send_response) {
     if (msg.text === 'save_images') {
         gapi.auth.authorize({interactive: true}, upload_files);
-        var status = {text: "All selected images are uploaded"};
-        send_response(status);
+        send_response(status_msg);
     }
 });
