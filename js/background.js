@@ -30,7 +30,7 @@ gapi.auth.authorize = function (params, callback) {
 };
 
 // Google API request method
-gapi.client.request = function (args) {
+gapi.client.request = function(args) {
     if (typeof args !== 'object')
         throw new Error('args required');
     if (typeof args.callback !== 'function')
@@ -41,7 +41,7 @@ gapi.client.request = function (args) {
     if (args.root && args.root === 'string') {
         var path = args.root + args.path;
     } else {
-        var path = 'https://www.googleapis.com' + args.path;
+        var path = 'https://www.googleapis.com/' + args.path;
     }
 
     if (typeof args.params === 'object') {
@@ -89,9 +89,25 @@ gapi.client.request = function (args) {
     };
 }
 
+gapi.client.mkdir = function(folder_name) {
+    gapi.client.request({
+        'path': 'drive/v3/files',
+        'method': 'POST',
+        'body': {
+            'name': folder_name,
+            'mimeType': 'application/vnd.google-apps.folder',
+            'parents': ['root']
+        },
+        'callback': function(json_resp, raw_resp) {
+            alert(JSON.stringify(json_resp));
+        }
+    });
+}
+
 function upload_files(auth_result) {
     if (auth_result && !auth_result.error) {
-    status_msg = {text: "All selected images are uploaded"};
+        gapi.client.mkdir('inav');
+        status_msg = {text: "All selected images are uploaded"};
     } else
         status_msg = {text: "Google Drive authorization error!"};
 }
