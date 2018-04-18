@@ -41,7 +41,7 @@ gapi.client.request = function(args) {
     if (args.root && args.root === 'string') {
         var path = args.root + args.path;
     } else {
-        var path = 'https://www.googleapis.com/' + args.path;
+        var path = 'https://www.googleapis.com' + args.path;
     }
 
     if (typeof args.params === 'object') {
@@ -89,9 +89,9 @@ gapi.client.request = function(args) {
     };
 }
 
-gapi.client.mkdir = function(folder_name) {
+gapi.client.createFolder = function(folder_name) {
     gapi.client.request({
-        'path': 'drive/v3/files',
+        'path': '/drive/v3/files',
         'method': 'POST',
         'body': {
             'name': folder_name,
@@ -104,9 +104,26 @@ gapi.client.mkdir = function(folder_name) {
     });
 }
 
+gapi.client.hasFolder = function(folder_name) {
+    gapi.client.request({
+        'path': '/drive/v3/files',
+        'method': 'GET',
+        'params': {
+            'maxResults': 10,
+            'q': "mimeType = 'application/vnd.google-apps.folder' and name = 'inav' and trashed=false",
+            'fields': "files(id, name)"
+        },
+        'callback': function(json_resp, raw_resp) {
+            if (json_resp.files.length===0)
+            alert('No folders found!');
+        }
+    });
+}
+
 function upload_files(auth_result) {
     if (auth_result && !auth_result.error) {
-        gapi.client.mkdir('inav');
+        //gapi.client.createFolder('inav');
+        gapi.client.hasFolder('inav');
         status_msg = {text: "All selected images are uploaded"};
     } else
         status_msg = {text: "Google Drive authorization error!"};
