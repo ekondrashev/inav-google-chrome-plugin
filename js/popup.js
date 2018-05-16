@@ -12,11 +12,23 @@ function show_multiselect(items) {
     items.forEach(function(element, index, arr){
         var option = document.createElement('option');
         option.setAttribute('data-img-src', element.fullsrc);
+        option.setAttribute('data-description', element.description);
         var text = document.createTextNode(element.description);
         option.appendChild(text);
         select.appendChild(option);
         });
         return select;
+}
+
+function show_button() {
+    var button = document.createElement('button');
+    var text = document.createTextNode("Upload selected images");
+    button.appendChild(text);
+    button.addEventListener('click', function() {
+        var s = $('.inav-select').selectedAsJSON();
+        //prompt('a', JSON.stringify(s));
+    });
+    return button;
 }
 
 // Function displays a list of pictures found on the page in the active tab
@@ -51,11 +63,28 @@ function show_menu(items) {
     return nav;
 }
 
+jQuery.fn.extend({
+    selectedAsJSON: function(){
+        var result = [];
+        $('option:selected', this).each(function(){
+            result.push($(this).data());
+        });
+        return result;
+    }
+});
+
 chrome.tabs.getSelected(null, function(tab) {
     chrome.tabs.sendMessage(tab.id, {text: 'get_all_images'}, function(response) {
         //document.getElementById('gallery').appendChild(show_menu(response));
         document.getElementById('gallery').appendChild(show_multiselect(response));
-        $(".inav-select").chosen({ width:"100%", });
+        $(".inav-select").chosen({
+            disable_search_threshold: 10,
+            placeholder_text_multiple: "Please select some images",
+            no_results_text: "Oops, no images found!",
+            width:"100%",
+            html_template: '<img style="border:3px solid #ff703d;padding:0px;margin:2px" class="{class_name}" src="{url}" alt="{text}" />'
+        });
+        document.getElementById('gallery').appendChild(show_button());
         //tab.url
     });
 });
