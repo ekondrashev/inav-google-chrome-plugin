@@ -124,58 +124,7 @@ gapi.client.getFolderId = function(folder_name, getId) {
     });
 }
 
-gapi.client.uploadImage = function(image_location) {
-    var xhr = new XmlHTTPRequest();
-    xhr.open('GET', image_location, true);
-    xhr.responseType = 'blob';
-    xhr.onload = function() {
-        var fileData = xhr.response;
-        const boundary = '-------314159265358979323846';
-        const delimiter = "\r\n--" + boundary + "\r\n";
-        const close_delim = "\r\n--" + boundary + "--";
-
-        var reader = new FileReader();
-        reader.readAsDataURL(fileData);
-        reader.onload =  function(e) {
-            var contentType = fileData.type || 'application/octet-stream';
-            var metadata = {
-                'name': fileData.fileName,
-                'mimeType': contentType
-            };
-            var data = reader.result;
-            var multipartRequestBody =
-                delimiter + 'Content-Type: application/json\r\n\r\n' +
-                JSON.stringify(metadata) +
-                delimiter +
-                'Content-Type: ' + contentType + '\r\n';
-                
-                //Transfer images as base64 string.
-                if (contentType.indexOf('image/') === 0) {
-                    var pos = data.indexOf('base64,');
-                    multipartRequestBody += 'Content-Transfer-Encoding: base64\r\n' + '\r\n' +
-                        data.slice(pos < 0 ? 0 : (pos + 'base64,'.length));
-                    } else {
-                        multipartRequestBody +=  + '\r\n' + data;
-                    }
-                    multipartRequestBody += close_delim;
-                    
-                    gapi.client.request({
-                        'path': '/upload/drive/v3/files',
-                        'method': 'POST',
-                        'params': {'uploadType': 'multipart'},
-                        'headers': {
-                            'Content-Type': 'multipart/mixed; boundary="' + boundary + '"'
-                        },
-                        'body': multipartRequestBody,
-                        'callback': function(json_resp, raw_resp) {
-                            //if(file.id)
-                            // send id to STM and mark uploaded
-                            alert("request execute: "+JSON.stringify(json_resp));
-                        }
-                    });
-        }
-    }
-}
+// ***
 
 function upload_files(auth_result) {
     if (auth_result && !auth_result.error) {

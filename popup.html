@@ -3,7 +3,21 @@
     <head>
         <meta charset="utf-8" />
         <title>Image Navigator</title>
+        <link rel="stylesheet" href="js/lib/chosen/chosen.css">
+        <link rel="stylesheet" href="js/lib/ImageSelect.css">
         <style>
+        body {
+            overflow: hidden;
+            padding:10px;
+            font:14px/1.5 Lato, "Helvetica Neue", Helvetica, Arial, sans-serif;
+            color:#777;font-weight:300;
+            width:500px; height: 480px;
+            background-color:black;
+        }
+        h2 {margin-top: 0px;}
+        table {width:100%;}
+        td {padding:10px; width:45%;}
+        td:first-child{width:10%;}
         ul {
             list-style-position: inside;
             display: block;
@@ -13,14 +27,12 @@
             padding:5px;
         }
         </style>
-        <link href="gallery/css/jquery.galereya.css" rel="stylesheet"/>
-        <!--[if lt IE 9]>
-        <link rel="stylesheet" href="gallery/css/jquery.galereya.ie.css">
-        <![endif]-->
-        <script src="js/debug.js"></script>
-        <script src="gallery/js/jquery.min.js"></script>
-        <script src="gallery/js/jquery.galereya.min.js"></script>
-        <script src="js/popup.js"></script>
+
+        <script type="text/javascript" src="js/debug.js"></script>
+        <script type="text/javascript" src="js/lib/jquery.min.js"></script>
+        <script type="text/javascript" src="js/lib/chosen/chosen.jquery.js"></script>
+        <script type="text/javascript" src="js/lib/ImageSelect.jquery.js"></script>
+        <script type="text/javascript" src="js/popup.js"></script>
     </head>
     <body>
         <div id="gallery"></div>

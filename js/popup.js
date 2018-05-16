@@ -1,10 +1,31 @@
+// Function shows multiselect of all images found on the page in the active tab
+function show_multiselect(items) {
+    if(items.length===0) {
+        var h2 = document.createElement('h2');
+        var text = document.createTextNode("Can't find images in active tab!");
+        h2.appendChild(text);
+        return h2;
+    }
+    var select = document.createElement('select');
+    select.setAttribute('class', 'inav-select');
+    select.setAttribute('multiple', 'multiple');
+    items.forEach(function(element, index, arr){
+        var option = document.createElement('option');
+        option.setAttribute('data-img-src', element.fullsrc);
+        var text = document.createTextNode(element.description);
+        option.appendChild(text);
+        select.appendChild(option);
+        });
+        return select;
+}
+
 // Function displays a list of pictures found on the page in the active tab
 function show_menu(items) {
     if(items.length===0) {
-        var h1 = document.createElement('h1');
+        var h2 = document.createElement('h2');
         var text = document.createTextNode("Can't find images in active tab!");
-        h1.appendChild(text);
-        return h1;
+        h2.appendChild(text);
+        return h2;
     }
     var nav = document.createElement('nav');
     nav.setAttribute('role', 'navigation');
@@ -22,7 +43,7 @@ function show_menu(items) {
         img.setAttribute('alt', element.description);
         button.appendChild(img);
         button.addEventListener('click', function() {
-            document.getElementById('galleryherepls').innerHTML = 'Button '+(index+1)+' has pressed!';
+            document.getElementById('gallery').innerHTML = 'Button '+(index+1)+' has pressed!';
         });
         li.appendChild(button);
         ul.appendChild(li);
@@ -32,14 +53,9 @@ function show_menu(items) {
 
 chrome.tabs.getSelected(null, function(tab) {
     chrome.tabs.sendMessage(tab.id, {text: 'get_all_images'}, function(response) {
-        $(function() {
-            $('#gallery').galereya({
-                load: function(next) {
-                    next(response);
-                }
-            });
-        });
         //document.getElementById('gallery').appendChild(show_menu(response));
+        document.getElementById('gallery').appendChild(show_multiselect(response));
+        $(".inav-select").chosen({ width:"100%", });
         //tab.url
     });
 });
