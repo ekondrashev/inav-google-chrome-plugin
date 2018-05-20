@@ -20,13 +20,25 @@ function show_multiselect(items) {
         return select;
 }
 
-function show_button() {
+function show_upload_button() {
     var button = document.createElement('button');
     var text = document.createTextNode("Upload selected images");
     button.appendChild(text);
     button.addEventListener('click', function() {
         var s = $('.inav-select').selectedAsJSON();
         //prompt('a', JSON.stringify(s));
+    });
+    return button;
+}
+
+function show_revoke_button() {
+    var button = document.createElement('button');
+    var text = document.createTextNode("revoke access token");
+    button.appendChild(text);
+    button.addEventListener('click', function() {
+        chrome.runtime.sendMessage({text: "revoke_token"}, function(resp) {
+            alert(resp.text);
+        });
     });
     return button;
 }
@@ -84,12 +96,13 @@ chrome.tabs.getSelected(null, function(tab) {
             width:"100%",
             html_template: '<img style="border:3px solid #ff703d;padding:0px;margin:2px" class="{class_name}" src="{url}" alt="{text}" />'
         });
-        document.getElementById('gallery').appendChild(show_button());
+        document.getElementById('gallery').appendChild(show_upload_button());
+        document.getElementById('gallery').appendChild(show_revoke_button());
         //tab.url
     });
 });
 
 // Comunicate with background script
 chrome.runtime.sendMessage({text: "save_images"}, function(resp) {
-    //alert(resp.text);
+    alert(resp.text);
 });

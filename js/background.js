@@ -29,6 +29,25 @@ gapi.auth.authorize = function (params, callback) {
     chrome.identity.getAuthToken(details, callbackWrapper);
 };
 
+gapi.auth.revokeToken = function() {
+    chrome.identity.getAuthToken({ 'interactive': false },
+        function(current_token) {
+            if (!chrome.runtime.lastError) {
+                // @corecode_begin removeAndRevokeAuthToken
+                // @corecode_begin removeCachedAuthToken
+                // Remove the local cached token
+                chrome.identity.removeCachedAuthToken({ token: current_token },
+                    function() {});
+                // @corecode_end removeCachedAuthToken
+                // Make a request to revoke token in the server
+                var xhr = new XMLHttpRequest();
+                xhr.open('GET', 'https://accounts.google.com/o/oauth2/revoke?token=' + current_token);
+                xhr.send();
+                // @corecode_end removeAndRevokeAuthToken
+            }
+        });
+}
+
 // Google API request method
 gapi.client.request = function(args) {
     if (typeof args !== 'object')
@@ -114,9 +133,9 @@ gapi.client.getFolderId = function(folder_name, getId) {
             'fields': "files(id, name)"
         },
         'callback': function(json_resp, raw_resp) {
-            if (json_resp.files.length>0)
+            if (json_resp.files.length>0) {
                 getId(json_resp.files[0].id);
-            else
+            } else
                 gapi.client.createFolder(folder_name, function(id) {
                     getId(id);
                 });
@@ -124,7 +143,58 @@ gapi.client.getFolderId = function(folder_name, getId) {
     });
 }
 
-// ***
+gapi.client.uploadImage = function(location) {
+    var xhr = new XmlHTTPRequest();
+    xhr.open('GET', location, true);
+    xhr.responseType = 'blob';
+    xhr.onload = function() {
+        var fileData = xhr.response;
+        const boundary = '-------314159265358979323846';
+        const delimiter = "\r\n--" + boundary + "\r\n";
+        const close_delim = "\r\n--" + boundary + "--";
+
+        var reader = new FileReader();
+        reader.readAsDataURL(fileData);
+        reader.onload =  function(e) {
+            var contentType = fileData.type || 'application/octet-stream';
+            var metadata = {
+                'name': fileData.fileName,
+                'mimeType': contentType
+            };
+            var data = reader.result;
+            var multipartRequestBody =
+                delimiter + 'Content-Type: application/json\r\n\r\n' +
+                JSON.stringify(metadata) +
+                delimiter +
+                'Content-Type: ' + contentType + '\r\n';
+                
+                //Transfer images as base64 string.
+                if (contentType.indexOf('image/') === 0) {
+                    var pos = data.indexOf('base64,');
+                    multipartRequestBody += 'Content-Transfer-Encoding: base64\r\n' + '\r\n' +
+                        data.slice(pos < 0 ? 0 : (pos + 'base64,'.length));
+                    } else {
+                        multipartRequestBody +=  + '\r\n' + data;
+                    }
+                    multipartRequestBody += close_delim;
+                    
+                    gapi.client.request({
+                        'path': '/upload/drive/v3/files',
+                        'method': 'POST',
+                        'params': {'uploadType': 'multipart'},
+                        'headers': {
+                            'Content-Type': 'multipart/mixed; boundary="' + boundary + '"'
+                        },
+                        'body': multipartRequestBody,
+                        'callback': function(json_resp, raw_resp) {
+                            //if(file.id)
+                            // send id to STM and mark uploaded
+                            alert("request execute: "+JSON.stringify(json_resp));
+                        }
+                    });
+        }
+    }
+}
 
 function upload_files(auth_result) {
     if (auth_result && !auth_result.error) {
@@ -142,5 +212,8 @@ chrome.runtime.onMessage.addListener(function (msg, sender, send_response) {
     if (msg.text === 'save_images') {
         gapi.auth.authorize({interactive: true}, upload_files);
         send_response(status_msg);
+    } else if (msg.text === 'revoke_token') {
+        gapi.auth.revokeToken();
+        send_response({text: "Authorization token has revoked!"});
     }
 });
