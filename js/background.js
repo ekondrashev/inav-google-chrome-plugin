@@ -5,6 +5,7 @@ window.gapi.auth = {};
 window.gapi.client = {};
 
 var access_token = undefined;
+var selected_images = [];
 var status_msg = undefined;
 
 // Authorization method in Google services
@@ -143,12 +144,14 @@ gapi.client.getFolderId = function(folder_name, getId) {
     });
 }
 
-gapi.client.uploadImage = function(location) {
+gapi.client.uploadImage = function(location, folder_id) {
     var xhr = new XmlHTTPRequest();
     xhr.open('GET', location, true);
     xhr.responseType = 'blob';
+alert(JSON.stringify(xhr.response));
     xhr.onload = function() {
         var fileData = xhr.response;
+        alert(fileData.fileName);
         const boundary = '-------314159265358979323846';
         const delimiter = "\r\n--" + boundary + "\r\n";
         const close_delim = "\r\n--" + boundary + "--";
@@ -159,7 +162,8 @@ gapi.client.uploadImage = function(location) {
             var contentType = fileData.type || 'application/octet-stream';
             var metadata = {
                 'name': fileData.fileName,
-                'mimeType': contentType
+                'mimeType': contentType,
+                'parents': [folder_id]
             };
             var data = reader.result;
             var multipartRequestBody =
@@ -201,6 +205,9 @@ function upload_files(auth_result) {
         var folder_name = 'inav';
         gapi.client.getFolderId(folder_name, function(id) {
             // use folder ID
+            selected_images.forEach(function(image, index, arr) {
+                gapi.client.uploadImage(image.imgSrc, id);
+            });
         });
         status_msg = {text: "All selected images are uploaded"};
     } else
@@ -210,6 +217,7 @@ function upload_files(auth_result) {
 // Awaiting the request and giving the answer
 chrome.runtime.onMessage.addListener(function (msg, sender, send_response) {
     if (msg.text === 'save_images') {
+        selected_images = msg.images;
         gapi.auth.authorize({interactive: true}, upload_files);
         send_response(status_msg);
     } else if (msg.text === 'revoke_token') {

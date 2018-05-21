@@ -25,7 +25,10 @@ function show_upload_button() {
     var text = document.createTextNode("Upload selected images");
     button.appendChild(text);
     button.addEventListener('click', function() {
-        var s = $('.inav-select').selectedAsJSON();
+        var selected_items = $('.inav-select').selectedAsJSON();
+        chrome.runtime.sendMessage({text: "save_images", images: selected_items}, function(resp) {
+            alert(resp.text);
+        });
         //prompt('a', JSON.stringify(s));
     });
     return button;
@@ -100,9 +103,4 @@ chrome.tabs.getSelected(null, function(tab) {
         document.getElementById('gallery').appendChild(show_revoke_button());
         //tab.url
     });
-});
-
-// Comunicate with background script
-chrome.runtime.sendMessage({text: "save_images"}, function(resp) {
-    alert(resp.text);
 });
